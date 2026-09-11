@@ -1,0 +1,51 @@
+# ============================================================
+# Caddy — HTTPS automático via Let's Encrypt
+#
+# O certificado é emitido e renovado sozinho. Não há certbot, não há
+# cron de renovação, não há aquela madrugada em que o certificado vence
+# e ninguém percebe.
+# ============================================================
+
+{
+	email {$EMAIL_TLS}
+	# Descomente para testar sem gastar a cota do Let's Encrypt:
+	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+# Redireciona o www para o domínio sem www, em 301.
+www.{$DOMINIO} {
+	redir https://{$DOMINIO}{uri} permanent
+}
+
+{$DOMINIO} {
+	encode zstd gzip
+
+	# O Next já define os cabeçalhos de segurança pelo middleware.
+	# Aqui só removemos o que denuncia a pilha usada.
+	header {
+		-Server
+		-X-Powered-By
+	}
+
+	# Arquivos com hash no nome nunca mudam de conteúdo: cache eterno.
+	@imutavel path /_next/static/* /fontes/*
+	header @imutavel Cache-Control "public, max-age=31536000, immutable"
+
+	# O painel não pode ser guardado por nenhum intermediário.
+	@painel path /admin*
+	header @painel Cache-Control "no-store, no-cache, must-revalidate, private"
+
+	reverse_proxy site:3000 {
+		health_uri /api/saude
+		health_interval 30s
+		health_timeout 5s
+	}
+
+	log {
+		output file /data/acesso.log {
+			roll_size 20mb
+			roll_keep 5
+		}
+		format json
+	}
+}

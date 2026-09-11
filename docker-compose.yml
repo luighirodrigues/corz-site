@@ -1,0 +1,97 @@
+# ============================================================
+# Site CORZ — pilha de produção
+#
+#   docker compose up -d
+#
+# Três serviços: o site, o banco e o Caddy na frente resolvendo HTTPS.
+# Só o Caddy expõe porta para a internet. O Postgres não é publicado em
+# nenhuma porta do host — quem precisa dele são os contêineres da rede
+# interna, e mais ninguém.
+# ============================================================
+
+services:
+  banco:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-corz}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
+      POSTGRES_DB: ${POSTGRES_DB:-corz}
+      # Locale correto para ordenação de acentos em português.
+      POSTGRES_INITDB_ARGS: "--locale=C.UTF-8 --encoding=UTF8"
+    volumes:
+      - dados_postgres:/var/lib/postgresql/data
+      - ./backups:/backups
+    networks: [interna]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-corz} -d ${POSTGRES_DB:-corz}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    # Sem `ports:` de propósito. Postgres exposto na internet é uma das
+    # formas mais rápidas de perder um banco.
+
+  site:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:?defina NEXT_PUBLIC_SITE_URL no .env}
+    restart: unless-stopped
+    depends_on:
+      banco:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-corz}:${POSTGRES_PASSWORD}@banco:5432/${POSTGRES_DB:-corz}
+      SESSAO_SEGREDO: ${SESSAO_SEGREDO:?defina SESSAO_SEGREDO no .env}
+      CIFRA_SEGREDO: ${CIFRA_SEGREDO:?defina CIFRA_SEGREDO no .env}
+      CRON_SEGREDO: ${CRON_SEGREDO:?defina CRON_SEGREDO no .env}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+      TZ: America/Sao_Paulo
+    networks: [interna, externa]
+
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on: [site]
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - dados_caddy:/data
+      - config_caddy:/config
+    environment:
+      DOMINIO: ${DOMINIO:?defina DOMINIO no .env}
+      EMAIL_TLS: ${EMAIL_TLS:?defina EMAIL_TLS no .env}
+    networks: [externa]
+
+  # Publicação de artigos agendados. Um laço simples em shell é mais
+  # transparente que um agendador com dependências — e este contêiner
+  # cai junto com o resto se algo der errado, o que é fácil de notar.
+  agendador:
+    image: curlimages/curl:latest
+    restart: unless-stopped
+    depends_on: [site]
+    environment:
+      CRON_SEGREDO: ${CRON_SEGREDO}
+    networks: [externa]
+    # A chamada do curl precisa caber em uma linha só: no bloco YAML, uma
+    # linha mais indentada preserva a quebra, e o shell trataria a segunda
+    # metade como um comando separado.
+    entrypoint:
+      - sh
+      - -c
+      - 'while true; do sleep 300; curl -fsS -m 30 -H "Authorization: Bearer $$CRON_SEGREDO" http://site:3000/api/cron/publicar > /dev/null || true; done'
+
+volumes:
+  dados_postgres:
+  dados_caddy:
+  config_caddy:
+
+networks:
+  # O banco vive aqui e não enxerga a internet.
+  interna:
+    internal: true
+  externa:

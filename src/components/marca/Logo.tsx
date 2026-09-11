@@ -1,0 +1,74 @@
+import Image from "next/image";
+import corzBranco from "../../../public/marca/corz-branco.png";
+
+/**
+ * Marca CORZ.
+ *
+ * Usa o arquivo oficial em vez de um símbolo redesenhado com a assinatura
+ * montada em fonte: proporção, espessura e espaçamento vêm prontos do
+ * manual, sem risco de a assinatura desalinhar quando a fonte variar.
+ *
+ * `priority` porque a marca fica na primeira dobra de toda página — sem
+ * isso ela entra depois do restante e o cabeçalho pisca vazio.
+ */
+export default function Logo({
+  className = "h-7",
+  titulo = "CORZ",
+  prioridade = true,
+}: {
+  className?: string;
+  titulo?: string;
+  prioridade?: boolean;
+}) {
+  return (
+    <Image
+      src={corzBranco}
+      alt={titulo}
+      className={`w-auto ${className}`}
+      priority={prioridade}
+      sizes="200px"
+    />
+  );
+}
+
+/**
+ * Só o símbolo, redesenhado em vetor a partir do manual.
+ * Serve onde a assinatura não cabe: favicon, avatar, selo do painel.
+ */
+export function Simbolo({
+  variante = "cor",
+  className,
+}: {
+  variante?: "cor" | "branco" | "escuro";
+  className?: string;
+}) {
+  const paleta = {
+    cor: ["#5592C6", "#2C3191", "#FFFFFF"],
+    branco: ["#FFFFFF", "#FFFFFF", "#FFFFFF"],
+    escuro: ["#00304D", "#00304D", "#00304D"],
+  }[variante];
+
+  return (
+    <svg
+      viewBox="0 0 1476 1240"
+      className={className}
+      role="presentation"
+      aria-hidden="true"
+    >
+      <g transform="translate(0,1240) scale(0.1,-0.1)">
+        <path
+          fill={paleta[0]}
+          d="M4755 11870 c-318 -29 -540 -130 -654 -299 -55 -82 -245 -398 -447 -744 -241 -412 -695 -1168 -993 -1651 -265 -429 -1551 -2474 -2014 -3200 -474 -745 -558 -912 -574 -1146 -14 -213 57 -391 374 -930 279 -474 373 -642 1150 -2055 427 -775 778 -1412 780 -1415 2 -2 1 20 -4 50 -4 30 -8 109 -7 175 0 98 4 131 22 180 32 87 146 291 298 533 74 116 194 308 268 425 207 330 6216 10075 6216 10081 0 9 -4321 4 -4415 -4z"
+        />
+        <path
+          fill={paleta[1]}
+          d="M3825 3038 c-379 -610 -759 -1223 -843 -1362 -84 -138 -211 -337 -282 -443 -201 -298 -259 -434 -267 -620 -7 -142 13 -216 87 -321 46 -65 140 -155 191 -183 41 -22 325 -30 1364 -39 583 -5 1427 -14 1875 -21 887 -12 3106 -6 3905 11 253 6 800 12 1216 15 473 3 782 8 824 15 194 31 314 109 383 247 47 94 57 146 57 288 0 124 -2 134 -32 208 -43 103 -81 168 -293 497 -230 358 -448 706 -891 1427 -336 546 -713 1150 -823 1321 l-47 72 -2867 0 -2867 -1 -690 -1111z"
+        />
+        <path
+          fill={paleta[2]}
+          d="M10259 12140 c-973 -1506 -1481 -2633 -1643 -3643 -63 -393 -62 -858 4 -1197 86 -447 351 -1023 805 -1750 71 -113 280 -434 465 -715 450 -681 1020 -1580 1730 -2730 139 -225 341 -547 449 -715 313 -490 336 -543 336 -782 0 -82 1 -148 2 -148 1 0 25 44 54 98 111 206 1606 2924 1783 3242 103 184 247 453 319 598 l132 263 0 157 c-1 155 -1 158 -33 232 -89 204 -223 420 -463 745 -180 245 -920 1280 -1221 1710 -1157 1653 -1917 2882 -2289 3700 -202 447 -284 719 -298 1000 l-6 130 -126 -195z"
+        />
+      </g>
+    </svg>
+  );
+}

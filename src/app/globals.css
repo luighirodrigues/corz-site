@@ -1,0 +1,1002 @@
+@import "tailwindcss";
+
+/* ============================================================
+   CORZ — Fundação de design
+   Separação de planos por tonalidade e fio de 1px.
+   Sem drop-shadow difuso genérico, sem raio grande por padrão.
+   ============================================================ */
+
+@theme {
+  /* ---- Cor de marca ---------------------------------------- */
+  --color-branco: #ffffff;
+  --color-preto: #000000;
+  --color-petroleo: #00304d;
+  --color-indigo: #2c3191;
+  --color-violeta: #3f39bd;
+  --color-ciano: #00ade7;
+
+  /* ---- Semântica ------------------------------------------- */
+  --color-negativo: #e20d50;
+  --color-positivo: #89e20d;
+  --color-alerta: #ebad28;
+
+  /* ---- Tinta: escuros derivados do petróleo, nunca cinza puro */
+  --color-tinta-950: #00131f;
+  --color-tinta-900: #001c2e;
+  --color-tinta-850: #00243b;
+  --color-tinta-800: #00304d;
+  --color-tinta-700: #0a4767;
+  --color-tinta-600: #14607f;
+
+  /* ---- Papel: claros levemente frios ----------------------- */
+  --color-papel-000: #ffffff;
+  --color-papel-050: #f6f8fa;
+  --color-papel-100: #eef2f5;
+  --color-papel-200: #dfe6ec;
+  --color-papel-300: #c4d0da;
+  --color-papel-400: #9aabb8;
+
+  /* ---- Tipografia ------------------------------------------ */
+  --font-display: var(--fonte-display), "Bricolage Grotesque", sans-serif;
+  --font-sans: var(--fonte-corpo), "Manrope", system-ui, sans-serif;
+  --font-wide: var(--fonte-larga), "Archivo", sans-serif;
+  --font-mono: var(--fonte-mono), "JetBrains Mono", ui-monospace, monospace;
+
+  /* ---- Movimento ------------------------------------------- */
+  --ease-corz: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-entrada: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-saida: cubic-bezier(0.7, 0, 0.84, 0);
+
+  /* ---- Raio -------------------------------------------------
+     O canto vivo em tudo deixa a página com cara de wireframe
+     gerado. Aqui o raio é perceptível, mas curto o bastante para
+     não virar "cartãozinho arredondado" de template. --------- */
+  --radius-fio: 4px;
+  --radius-peca: 10px;
+  --radius-campo: 10px;
+  --radius-bloco: 14px;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+@layer base {
+  :root {
+    --fio: color-mix(in oklab, var(--color-petroleo) 14%, transparent);
+    --fio-forte: color-mix(in oklab, var(--color-petroleo) 26%, transparent);
+    --fio-escuro: color-mix(in oklab, var(--color-branco) 12%, transparent);
+    --altura-cabecalho: 76px;
+  }
+
+  * {
+    border-color: var(--fio);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: auto; /* Lenis assume o controle */
+    /* Piso contra rolagem lateral.
+       Um único bloco que estoure a largura da tela — e basta um item
+       de grade com `min-width: auto` segurando uma tira rolável — faz
+       a página inteira ganhar barra horizontal e uma faixa branca do
+       lado direito em todas as outras seções. `clip` corta sem criar
+       container de rolagem, então `position: sticky` continua
+       funcionando. Não substitui corrigir a causa; evita que a
+       próxima vire defeito visível no site inteiro. */
+    overflow-x: clip;
+  }
+
+  body {
+    background: var(--color-papel-000);
+    color: var(--color-tinta-900);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.6;
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-variant-numeric: tabular-nums;
+    overflow-x: clip;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  p { text-wrap: pretty; }
+
+  ::selection {
+    background: var(--color-ciano);
+    color: var(--color-tinta-950);
+    text-shadow: none;
+  }
+  ::-moz-selection {
+    background: var(--color-ciano);
+    color: var(--color-tinta-950);
+  }
+
+  /* Seleção invertida dentro de superfícies escuras */
+  .sup-escura ::selection {
+    background: var(--color-positivo);
+    color: var(--color-tinta-950);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ciano);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+
+  /* Barra de rolagem — fina, da marca, sem parecer plugin */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-petroleo) transparent;
+  }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track {
+    background: var(--color-papel-100);
+    border-left: 1px solid var(--fio);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      180deg,
+      var(--color-petroleo) 0%,
+      var(--color-indigo) 100%
+    );
+    border: 3px solid var(--color-papel-100);
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+      180deg,
+      var(--color-indigo) 0%,
+      var(--color-violeta) 100%
+    );
+  }
+
+  img, svg, video { display: block; max-width: 100%; }
+
+  /* Item de grade não deve ter largura mínima de conteúdo.
+     O padrão do CSS é `min-width: auto`, o que faz a coluna crescer
+     até caber o maior bloco indivisível que ela contém — uma tira
+     rolável, uma tabela, uma tarja sem quebra. O resultado é a coluna
+     empurrando a página inteira e uma faixa branca do lado direito.
+     Como toda grade daqui marca os filhos com `col-span-*`, a
+     correção cabe numa regra só, em vez de `min-w-0` repetido em
+     quarenta lugares e esquecido no quadragésimo primeiro. */
+  [class*="col-span-"] { min-width: 0; }
+}
+
+/* ============================================================
+   Cursor customizado
+   O cursor nativo é ocultado apenas em ponteiro fino (mouse).
+   Toque e teclado seguem com comportamento nativo.
+   ============================================================ */
+
+@media (pointer: fine) {
+  html.cursor-corz,
+  html.cursor-corz * {
+    cursor: none !important;
+  }
+  /* Campos de texto mantêm o cursor nativo por usabilidade */
+  html.cursor-corz input,
+  html.cursor-corz textarea,
+  html.cursor-corz [contenteditable="true"] {
+    cursor: text !important;
+  }
+}
+
+/* ============================================================
+   Rolagem suave
+
+   O Lenis exige estas regras para funcionar — elas vêm no
+   `lenis/dist/lenis.css`, que não é importado aqui de propósito:
+   trazer o arquivo inteiro criaria mais uma folha de estilo no
+   documento para três declarações. Sem `height: auto`, o cálculo de
+   altura do documento trava e a rolagem simplesmente não engata.
+   ============================================================ */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+html.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+html.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* Blocos que rolam por conta própria (tiras horizontais, painéis com
+   overflow) pedem para o Lenis não capturar a roda. */
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.cursor-camada {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  display: none;
+}
+
+@media (pointer: fine) {
+  .cursor-camada { display: block; }
+}
+
+.cursor-anel,
+.cursor-ponto {
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  will-change: transform;
+}
+
+.cursor-anel[data-pronto="sim"],
+.cursor-ponto[data-pronto="sim"] { opacity: 1; }
+
+.cursor-anel {
+  --anel: 34px;
+  --raio: 50%;
+  width: var(--anel);
+  height: var(--anel);
+  border: 1px solid color-mix(in oklab, var(--color-ciano) 60%, transparent);
+  border-radius: var(--raio);
+  display: grid;
+  place-items: center;
+  color: var(--color-branco);
+  background: transparent;
+  transition:
+    width 0.42s var(--ease-corz),
+    height 0.42s var(--ease-corz),
+    border-radius 0.42s var(--ease-corz),
+    background-color 0.3s var(--ease-corz),
+    border-color 0.3s var(--ease-corz),
+    opacity 0.25s linear;
+  mix-blend-mode: normal;
+}
+
+.cursor-ponto {
+  --ponto: 5px;
+  width: var(--ponto);
+  height: var(--ponto);
+  border-radius: 50%;
+  background: var(--color-ciano);
+  transition:
+    width 0.3s var(--ease-corz),
+    height 0.3s var(--ease-corz),
+    opacity 0.25s linear;
+}
+
+/* Estados
+   Regra que vale para todos: o anel nunca é opaco. Preenchimento sólido
+   vira um disco que tapa justamente o elemento que a pessoa quer ler.
+   O estado é comunicado pela cor da borda e por um véu de baixa opacidade. */
+.cursor-anel[data-estado="link"],
+.cursor-anel[data-estado="externo"] {
+  background: color-mix(in oklab, var(--color-ciano) 12%, transparent);
+  border-color: var(--color-ciano);
+}
+.cursor-anel[data-estado="acao"],
+.cursor-anel[data-estado="midia"],
+.cursor-anel[data-estado="arrastar"] {
+  background: color-mix(in oklab, var(--color-ciano) 10%, transparent);
+  border-color: var(--color-ciano);
+  border-width: 1.5px;
+}
+/* Barra vertical fina, análoga ao cursor de texto do sistema. */
+.cursor-anel[data-estado="texto"] {
+  background: var(--color-ciano);
+  border-color: transparent;
+  height: 26px;
+  opacity: 0.75;
+}
+.cursor-anel[data-estado="bloqueado"] {
+  background: color-mix(in oklab, var(--color-negativo) 14%, transparent);
+  border-color: var(--color-negativo);
+}
+.cursor-anel[data-pressionado="sim"] { transform-origin: center; }
+.cursor-anel[data-pressionado="sim"]::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--color-ciano);
+  border-radius: inherit;
+  animation: pulso-cursor 0.5s var(--ease-saida) forwards;
+}
+
+@keyframes pulso-cursor {
+  from { transform: scale(1); opacity: 0.9; }
+  to { transform: scale(1.9); opacity: 0; }
+}
+
+/* Glifos internos */
+.cursor-anel svg {
+  position: absolute;
+  width: 40%;
+  height: 40%;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.24s var(--ease-corz), transform 0.24s var(--ease-corz);
+}
+.cursor-anel[data-estado="externo"] .cursor-seta,
+.cursor-anel[data-estado="arrastar"] .cursor-barra,
+.cursor-anel[data-estado="bloqueado"] .cursor-bloqueio {
+  opacity: 1;
+  transform: scale(1);
+}
+.cursor-anel svg { color: var(--color-ciano); }
+
+.cursor-rotulo {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-branco);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.24s var(--ease-corz), transform 0.24s var(--ease-corz);
+  white-space: nowrap;
+}
+.cursor-rotulo[data-visivel="sim"] { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   Símbolo vivo do herói
+
+   Quatro camadas, todas em CSS: halo que respira, anéis que giram,
+   as três faces da marca acendendo em sequência e uma lâmina de luz
+   atravessando de tempos em tempos.
+
+   Nada aqui é necessário para a marca aparecer. O SVG já está no HTML;
+   isto é acabamento por cima. Se o JavaScript falhar, fica o desenho.
+   ============================================================ */
+
+.simbolo-vivo {
+  --ritmo: 1;
+}
+
+/* ---- Halo ----
+   Os dois transbordam muito além da caixa do símbolo, e a seção do
+   herói é quem recorta. É o que faz a luz do sinal participar da seção
+   inteira em vez de morrer numa circunferência visível em volta dele.
+
+   O degradê chega a transparente bem antes do fim do elemento, de
+   propósito: é a única forma de não existir aresta nenhuma, nem no
+   ponto em que o gradiente acaba nem na borda do próprio elemento. */
+.simbolo-vivo .halo {
+  position: absolute;
+  inset: -110%;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.simbolo-vivo .halo-ciano {
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in oklab, var(--color-ciano) 55%, transparent) 0%,
+    color-mix(in oklab, var(--color-ciano) 14%, transparent) 22%,
+    transparent 48%
+  );
+  opacity: 0.42;
+  animation: halo-respira 7s ease-in-out infinite;
+}
+.simbolo-vivo .halo-violeta {
+  inset: -75%;
+  background: radial-gradient(
+    circle at 46% 54%,
+    color-mix(in oklab, var(--color-violeta) 62%, transparent) 0%,
+    color-mix(in oklab, var(--color-violeta) 16%, transparent) 26%,
+    transparent 52%
+  );
+  opacity: 0.5;
+  animation: halo-respira 9s ease-in-out infinite reverse;
+  animation-delay: -3s;
+}
+
+@keyframes halo-respira {
+  0%, 100% { transform: scale(0.94); opacity: 0.72; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+/* ---- Anéis ---- */
+.simbolo-vivo .anel {
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+.simbolo-vivo .anel-externo {
+  animation: gira 48s linear infinite;
+  animation-duration: calc(48s / var(--ritmo));
+}
+.simbolo-vivo .anel-interno {
+  animation: gira 26s linear infinite reverse;
+  animation-duration: calc(26s / var(--ritmo));
+}
+
+@keyframes gira {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Marca ---- */
+.simbolo-vivo .marca {
+  animation: flutua 7s ease-in-out infinite;
+  filter: drop-shadow(0 0 22px color-mix(in oklab, var(--color-ciano) 26%, transparent));
+  transition: filter 0.6s var(--ease-corz);
+}
+
+@keyframes flutua {
+  0%, 100% { transform: translateY(-1.5%); }
+  50% { transform: translateY(1.5%); }
+}
+
+/* As três faces do sinal acendem uma atrás da outra. O atraso negativo
+   faz o ciclo já começar espalhado, sem a piscada inicial em uníssono. */
+.simbolo-vivo .marca svg path {
+  animation: acende 5.4s ease-in-out infinite;
+}
+.simbolo-vivo .marca svg path:nth-of-type(1) { animation-delay: -5.4s; }
+.simbolo-vivo .marca svg path:nth-of-type(2) { animation-delay: -3.6s; }
+.simbolo-vivo .marca svg path:nth-of-type(3) { animation-delay: -1.8s; }
+
+/* O piso alto é proposital: a marca precisa ler como branca o tempo
+   todo. Um vale fundo economiza brilho e entrega logo desbotado. */
+@keyframes acende {
+  0%, 100% { opacity: 0.86; }
+  22% { opacity: 1; }
+  55% { opacity: 0.9; }
+}
+
+/* ---- Varredura ---- */
+.simbolo-vivo .varredura {
+  position: absolute;
+  inset: -30% -60%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background: linear-gradient(
+    104deg,
+    transparent 30%,
+    color-mix(in oklab, var(--color-ciano) 24%, transparent) 50%,
+    transparent 70%
+  );
+  /* Sem a máscara, as bordas da faixa aparecem como um retângulo claro
+     atravessando o fundo escuro. */
+  mask-image: radial-gradient(closest-side, #000 45%, transparent 100%);
+  opacity: 0;
+  animation: varre 9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes varre {
+  0%, 62% { transform: translateX(-42%); opacity: 0; }
+  70% { opacity: 0.9; }
+  86% { opacity: 0.9; }
+  100% { transform: translateX(42%); opacity: 0; }
+}
+
+/* ---- Resposta ao ponteiro ----
+   Os anéis aceleram e o brilho abre. É a única interação: passar o
+   mouse já é intenção suficiente, não precisa de clique. */
+@media (hover: hover) {
+  .simbolo-vivo:hover {
+    --ritmo: 2.6;
+  }
+  .simbolo-vivo:hover .marca {
+    filter: drop-shadow(0 0 34px color-mix(in oklab, var(--color-ciano) 46%, transparent));
+  }
+}
+
+/* Painel das quatro perguntas.
+   A troca de aba remonta o painel, e a animação de entrada nasce daí.
+   Só opacidade e um deslocamento curto: o conteúdo troca no lugar, sem
+   nada deslizando de fora da tela. */
+@keyframes entra-painel {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.painel-pergunta {
+  animation: entra-painel 0.35s var(--ease-entrada) both;
+}
+
+/* ============================================================
+   Prosa — corpo de artigo publicado e área de edição.
+   Mesma métrica nos dois lugares: o editor mostra o que sai.
+   ============================================================ */
+
+.prosa,
+.prosa-editor {
+  font-size: 1.0625rem;
+  line-height: 1.76;
+  color: color-mix(in oklab, var(--color-tinta-900) 82%, transparent);
+  max-width: 68ch;
+}
+
+.prosa > * + *,
+.prosa-editor > * + * { margin-top: 1.35em; }
+
+.prosa h2,
+.prosa-editor h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.6vw, 1.875rem);
+  font-weight: 700;
+  letter-spacing: -0.032em;
+  line-height: 1.12;
+  color: var(--color-tinta-900);
+  margin-top: 2.4em;
+}
+
+.prosa h3,
+.prosa-editor h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.024em;
+  line-height: 1.25;
+  color: var(--color-tinta-900);
+  margin-top: 2em;
+}
+
+.prosa a,
+.prosa-editor a {
+  color: #1d4fd8;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s var(--ease-corz);
+}
+.prosa a:hover { color: #153bab; }
+
+.prosa strong,
+.prosa-editor strong { font-weight: 650; color: var(--color-tinta-900); }
+
+.prosa ul, .prosa ol,
+.prosa-editor ul, .prosa-editor ol { padding-left: 1.4em; }
+.prosa ul, .prosa-editor ul { list-style: none; }
+.prosa ul > li, .prosa-editor ul > li { position: relative; }
+.prosa ul > li::before,
+.prosa-editor ul > li::before {
+  content: "";
+  position: absolute;
+  left: -1.15em;
+  top: 0.82em;
+  width: 0.6em;
+  height: 1px;
+  background: color-mix(in oklab, var(--color-petroleo) 45%, transparent);
+}
+.prosa ol, .prosa-editor ol { list-style: decimal; }
+.prosa ol::marker, .prosa-editor ol::marker { color: var(--color-petroleo); }
+.prosa li + li, .prosa-editor li + li { margin-top: 0.5em; }
+
+.prosa blockquote,
+.prosa-editor blockquote {
+  border-left: 2px solid #1d4fd8;
+  padding: 0.2em 0 0.2em 1.4em;
+  margin-left: 0;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  line-height: 1.4;
+  color: var(--color-tinta-900);
+}
+
+.prosa hr,
+.prosa-editor hr {
+  border: 0;
+  border-top: 1px solid var(--fio);
+  margin-block: 2.6em;
+}
+
+.prosa figure, .prosa-editor figure { margin-inline: 0; }
+.prosa img, .prosa-editor img {
+  width: 100%;
+  border-radius: var(--radius-peca);
+  border: 1px solid var(--fio);
+}
+.prosa figcaption,
+.prosa-editor figcaption {
+  margin-top: 0.75em;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--color-tinta-900) 45%, transparent);
+}
+
+.prosa code, .prosa-editor code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--color-papel-100);
+  border: 1px solid var(--fio);
+  border-radius: 2px;
+  padding: 0.1em 0.35em;
+}
+.prosa pre, .prosa-editor pre {
+  background: var(--color-tinta-950);
+  color: var(--color-papel-100);
+  border-radius: var(--radius-peca);
+  padding: 1.25em;
+  overflow-x: auto;
+  font-size: 0.875rem;
+}
+.prosa pre code, .prosa-editor pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+}
+
+.prosa table, .prosa-editor table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+.prosa th, .prosa td,
+.prosa-editor th, .prosa-editor td {
+  border: 1px solid var(--fio);
+  padding: 0.7em 0.9em;
+  text-align: left;
+}
+.prosa th, .prosa-editor th {
+  background: var(--color-papel-050);
+  font-weight: 600;
+  color: var(--color-tinta-900);
+}
+
+.prosa iframe, .prosa-editor iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--fio);
+  border-radius: var(--radius-peca);
+}
+
+.prosa-editor:empty::before,
+.prosa-editor > p:only-child:empty::before {
+  content: "Comece pela dor. O leitor precisa se reconhecer na primeira frase.";
+  color: color-mix(in oklab, var(--color-tinta-900) 32%, transparent);
+}
+
+/* ============================================================
+   Controle deslizante
+   O nativo é feio em todo navegador e diferente em cada um.
+   Trilho de 2px, punho quadrado: coerente com o resto do sistema.
+   ============================================================ */
+
+.controle {
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  background: transparent;
+  cursor: pointer;
+}
+.controle::-webkit-slider-runnable-track {
+  height: 2px;
+  background: color-mix(in oklab, var(--color-petroleo) 18%, transparent);
+}
+.controle::-moz-range-track {
+  height: 2px;
+  background: color-mix(in oklab, var(--color-petroleo) 18%, transparent);
+}
+.controle::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -6px;
+  border-radius: 2px;
+  background: #1d4fd8;
+  border: 0;
+  transition: transform 0.2s var(--ease-corz), background-color 0.2s;
+}
+.controle::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  background: #1d4fd8;
+  border: 0;
+}
+.controle:hover::-webkit-slider-thumb { transform: scale(1.22); }
+.controle:active::-webkit-slider-thumb { background: var(--color-ciano); }
+.controle:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-ciano);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Revelação de conteúdo
+   ============================================================ */
+
+/* Toda regra de esconder depende de [data-anima="sim"] na raiz, que só
+   existe se o script do <head> tiver rodado. Sem ele, o conteúdo fica
+   visível: é impossível a página aparecer vazia por falha de script. */
+.revelar {
+  transition-property: opacity, transform, clip-path;
+  transition-duration: 0.7s;
+  transition-timing-function: var(--ease-entrada);
+}
+
+[data-anima="sim"] .revelar[data-visivel="nao"][data-modo="subir"] {
+  opacity: 0;
+  transform: translateY(14px);
+}
+[data-anima="sim"] .revelar[data-visivel="nao"][data-modo="surgir"] {
+  opacity: 0;
+}
+[data-anima="sim"] .revelar[data-visivel="nao"][data-modo="fio"] {
+  clip-path: inset(0 100% 0 0);
+}
+
+/* O `clip-path` só existe para o modo "fio", que revela desenhando da
+   esquerda para a direita. Aplicado a todos os modos, como estava, ele
+   recortava o conteúdo na caixa do elemento mesmo depois de revelado:
+   era o que desenhava um retângulo em volta do símbolo do herói e
+   cortava o halo dele na borda. */
+.revelar[data-visivel="sim"] {
+  opacity: 1;
+  transform: none;
+}
+.revelar[data-modo="fio"][data-visivel="sim"] {
+  clip-path: inset(0 0 0 0);
+}
+
+/* ============================================================
+   Utilitários de composição
+   ============================================================ */
+
+/* Rótulo de seção.
+   Era mono, caixa-alta e com entreletra larga: o par exato que
+   circula em página gerada automaticamente. Agora é a fonte do
+   corpo, em caixa normal, com peso. Lê-se como legenda de revista,
+   não como terminal. */
+@utility rotulo {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  text-transform: none;
+  line-height: 1.25;
+}
+
+@utility fio-t {
+  border-top: 1px solid var(--fio);
+}
+
+@utility fio-b {
+  border-bottom: 1px solid var(--fio);
+}
+
+/* Colunas de fundo.
+   O quadriculado saiu: repetido em toda página, ele é hoje uma das
+   texturas mais associadas a layout gerado. Ficaram só as verticais,
+   largas e fracas, que é o gesto de grade editorial de onde a marca
+   vem. Serve para dar prumo, não para desenhar papel milimetrado. */
+@utility malha {
+  background-image: linear-gradient(
+    to right,
+    color-mix(in oklab, var(--color-petroleo) 8%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 8.5rem 100%;
+}
+
+@utility malha-escura {
+  background-image: linear-gradient(
+    to right,
+    color-mix(in oklab, var(--color-branco) 7%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 8.5rem 100%;
+}
+
+/* Brilho de borda para superfícies escuras: substitui a caixa de
+   fio duro por uma transição de luz. */
+@utility aureola {
+  background:
+    radial-gradient(
+      120% 100% at 50% 0%,
+      color-mix(in oklab, var(--color-ciano) 12%, transparent) 0%,
+      transparent 60%
+    );
+}
+
+/* ============================================================
+   Bruma inferior
+
+   Uma faixa de desfoque presa na base da janela. Não pinta cor
+   nenhuma: só embaça o que passa por baixo dela, num degradê que
+   começa em nada e termina fraco. É o que dá a sensação de que o
+   conteúdo continua para fora da tela em vez de ser cortado numa
+   linha reta, e funciona igual sobre seção clara e sobre seção
+   escura, justamente porque não tem cor própria.
+
+   Duas camadas em vez de uma: uma leve cobrindo a faixa inteira e
+   outra mais fechada só no terço final. O desfoque cresce em vez de
+   aparecer de uma vez, que é a diferença entre parecer acabamento e
+   parecer um retângulo embaçado colado na tela.
+
+   Nunca recebe clique — fica abaixo do botão de WhatsApp (z-95) e
+   acima do conteúdo.
+   ============================================================ */
+
+.bruma-base {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 80;
+  height: clamp(3.25rem, 6.5vh, 5.5rem);
+  pointer-events: none;
+  display: none;
+}
+
+.bruma-base::before,
+.bruma-base::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+}
+
+.bruma-base::before {
+  top: 0;
+  /* Sem prefixo -webkit- à mão: o Lightning CSS do Tailwind emite o
+     que cada navegador da browserslist precisa. Escrever os dois faz
+     ele deduplicar e manter só o prefixado, que é justamente o que
+     alguns Chromium não implementam — o desfoque some sem erro. */
+  backdrop-filter: blur(2px);
+  mask-image: linear-gradient(to top, #000 34%, transparent 100%);
+}
+
+.bruma-base::after {
+  height: 58%;
+  backdrop-filter: blur(6px);
+  mask-image: linear-gradient(to top, #000 20%, transparent 100%);
+}
+
+/* Só entra onde o navegador sabe desfocar o fundo. Sem isso o
+   elemento seria uma caixa transparente inútil no documento. */
+@supports (backdrop-filter: blur(1px)) {
+  .bruma-base { display: block; }
+}
+
+/* Quem pediu menos transparência no sistema não quer véu nenhum. */
+@media (prefers-reduced-transparency: reduce) {
+  .bruma-base { display: none; }
+}
+
+/* ============================================================
+   Mural de clientes em fita
+
+   Um trilho com a lista duplicada, deslizando -50%. Como as duas
+   cópias são idênticas, o instante em que a animação reinicia cai
+   exatamente sobre o quadro anterior e não existe emenda visível.
+
+   A máscara nas pontas é o que separa "fita que continua" de "fita
+   cortada": as marcas entram e saem por uma transição, e não por uma
+   guilhotina na borda do container.
+   ============================================================ */
+
+.mural {
+  position: relative;
+  overflow: hidden;
+  /* A mesma máscara nas duas pontas. Sem cor própria: funciona sobre
+     qualquer fundo de seção, ao contrário do degradê pintado. */
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 5.5rem,
+    #000 calc(100% - 5.5rem),
+    transparent 100%
+  );
+}
+
+.mural-trilho {
+  display: flex;
+  width: max-content;
+  animation: mural-corre var(--volta, 50s) linear infinite;
+  will-change: transform;
+}
+
+/* Só anima enquanto está na tela e ninguém está olhando de perto. */
+.mural[data-correndo="nao"] .mural-trilho,
+.mural[data-pausado="sim"] .mural-trilho {
+  animation-play-state: paused;
+}
+
+@keyframes mural-corre {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+.mural-fita {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mural-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  /* 9 × 3.75 = 2,4:1, exatamente a proporção da tela em que os
+     arquivos foram nivelados. Qualquer outra caixa sobraria espaço
+     dentro do item e faria os logotipos parecerem pequenos e soltos. */
+  width: 9rem;
+  height: 3.75rem;
+  padding-inline: 1.5rem;
+  box-sizing: content-box;
+  /* Fio entre as marcas em vez de cartão em volta de cada uma: é o
+     gesto de grade editorial que o resto do site usa. */
+  border-right: 1px solid var(--fio);
+  opacity: 0.88;
+  transition:
+    opacity 0.45s var(--ease-corz),
+    filter 0.45s var(--ease-corz);
+}
+
+/* Com o mouse na fita, tudo recua e só o que está sob o cursor fica
+   em cor cheia. É o que permite reconhecer um cliente sem persegui-lo
+   com o olho. */
+.mural[data-pausado="sim"] .mural-item {
+  opacity: 0.3;
+  filter: grayscale(1);
+}
+
+.mural[data-pausado="sim"] .mural-item:hover {
+  opacity: 1;
+  filter: none;
+}
+
+@media (max-width: 640px) {
+  .mural-item {
+    width: 6.6rem;
+    height: 2.75rem;
+    padding-inline: 1rem;
+  }
+  .mural {
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 2.5rem,
+      #000 calc(100% - 2.5rem),
+      transparent 100%
+    );
+  }
+}
+
+/* Sem movimento imposto: a fita para e vira uma tira que a pessoa
+   arrasta no ritmo dela. */
+@media (prefers-reduced-motion: reduce) {
+  .mural {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .mural::-webkit-scrollbar { display: none; }
+  .mural-trilho { animation: none; }
+  .mural-fita[aria-hidden="true"] { display: none; }
+}
