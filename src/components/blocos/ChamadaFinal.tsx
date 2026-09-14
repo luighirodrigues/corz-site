@@ -65,11 +65,16 @@ export default function ChamadaFinal({
                 target="_blank"
                 rel="noopener noreferrer"
                 data-cursor="externo"
-                /* Rótulo e telefone lado a lado só quando há largura
-                   para os dois inteiros. Espremidos, o número quebrava
-                   no meio — e telefone partido em duas linhas deixa de
-                   ser telefone. */
-                className="flex flex-col gap-1 rounded-[10px] border border-branco/22 px-6 py-4.5 text-[0.9375rem] font-semibold text-branco transition-colors duration-300 hover:border-branco min-[420px]:flex-row min-[420px]:items-center min-[420px]:justify-between min-[420px]:gap-4"
+                /* `flex-wrap` em vez de um ponto de quebra fixo: os
+                   dois pedaços ficam lado a lado quando há largura para
+                   ambos inteiros e caem um sob o outro quando não há —
+                   e isso vale para qualquer largura, não só para as que
+                   alguém lembrou de testar. A coluna aqui é estreita
+                   tanto no celular quanto em 1024px, onde a grade já
+                   virou de quatro colunas e a janela ainda é curta.
+                   Espremidos, o número quebrava no meio, e telefone
+                   partido em duas linhas deixa de ser telefone. */
+                className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-[10px] border border-branco/22 px-6 py-4.5 text-[0.9375rem] font-semibold text-branco transition-colors duration-300 hover:border-branco"
               >
                 <span className="whitespace-nowrap">
                   Fale com a CORZ no WhatsApp

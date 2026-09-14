@@ -167,6 +167,6 @@ export function proxy(req: NextRequest) {
 export const config = {
   matcher: [
     // Tudo, menos arquivos estáticos e otimização de imagem.
-    "/((?!_next/static|_next/image|favicon.ico|favicon.svg|apple-touch-icon.png|site.webmanifest|marca/).*)",
+    "/((?!_next/static|_next/image|favicon.ico|favicon-32.png|icone-192.png|icone-512.png|icone-maskable.png|apple-touch-icon.png|site.webmanifest|clientes/|marca/).*)",
   ],
 };

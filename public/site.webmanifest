@@ -4,12 +4,32 @@
   "description": "Continuidade operacional para empresas que não podem parar.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#00131F",
+  "background_color": "#FFFFFF",
   "theme_color": "#00131F",
   "lang": "pt-BR",
   "icons": [
-    { "src": "/icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+    {
+      "src": "/icone-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icone-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icone-maskable.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
   ]
 }

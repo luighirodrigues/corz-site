@@ -57,15 +57,22 @@ export default function Confianca() {
                   key={cliente.nome}
                   atraso={(i % 4) * 55}
                   como="li"
-                  className="group flex min-h-[7.5rem] items-center justify-center rounded-[var(--radius-bloco)] border border-petroleo/10 bg-papel-050 p-5 transition-colors duration-400 hover:border-petroleo/22 hover:bg-papel-000"
+                  className="group flex min-h-[8.25rem] items-center justify-center rounded-[var(--radius-bloco)] border border-petroleo/10 bg-papel-050 px-3 py-4 transition-colors duration-400 hover:border-petroleo/22 hover:bg-papel-000 sm:px-4"
                 >
+                  {/* Caixa de 2,4:1, a mesma proporção em que os oito
+                      arquivos foram nivelados pela área de tinta. Com a
+                      caixa e o arquivo na mesma proporção, a marca
+                      preenche o espaço todo em vez de flutuar no meio —
+                      e, como o nivelamento é por tinta e não por altura,
+                      o selo redondo e o logotipo em linha passam a pesar
+                      igual em vez de um parecer o dobro do outro. */}
                   <Image
                     src={cliente.arquivo}
                     alt={cliente.nome}
                     width={cliente.largura}
                     height={cliente.altura}
-                    sizes="(min-width: 1024px) 180px, 40vw"
-                    className="h-auto max-h-[3.25rem] w-auto max-w-full object-contain opacity-[0.88] transition-opacity duration-400 group-hover:opacity-100"
+                    sizes="(min-width: 1024px) 220px, 45vw"
+                    className="h-auto w-full max-w-[11.5rem] object-contain opacity-[0.9] transition-opacity duration-400 group-hover:opacity-100"
                   />
                 </Revelar>
               ))}

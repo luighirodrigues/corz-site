@@ -3,7 +3,7 @@ import "./globals.css";
 import { classesDeFonte } from "@/lib/fontes";
 import { medicao } from "@/lib/medicao";
 import { site } from "@/conteudo/site";
-import { URL_BASE, INDEXAVEL } from "@/lib/seo";
+import { URL_BASE, INDEXAVEL, NOME_DO_SITE, IMAGEM_CARTAO } from "@/lib/seo";
 
 export const viewport: Viewport = {
   themeColor: "#00131F",
@@ -15,7 +15,9 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(URL_BASE),
   title: {
-    default: `${site.nomeCompleto}: continuidade operacional para quem não pode parar`,
+    /* É este texto que vira o link azul no resultado de busca da home,
+       e o nome que o Google costuma adotar como nome do site. */
+    default: NOME_DO_SITE,
     template: `%s | ${site.nome}`,
   },
   description: site.descricao,
@@ -33,9 +35,14 @@ export const metadata: Metadata = {
   // que responde 404 é a forma mais rápida de entregar a área escondida.
   alternates: { canonical: "/" },
   icons: {
+    /* Sem SVG: a marca tem três peças de cor chapada, e o .ico
+       multitamanho (16 a 64) já sai nítido em qualquer tela. Um SVG
+       aqui seria só um PNG embrulhado. */
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
+      { url: "/icone-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icone-512.png", type: "image/png", sizes: "512x512" },
     ],
     apple: "/apple-touch-icon.png",
   },
@@ -43,13 +50,24 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    siteName: site.nomeCompleto,
+    siteName: NOME_DO_SITE,
+    title: NOME_DO_SITE,
+    description: site.descricao,
     url: URL_BASE,
+    images: [
+      {
+        url: IMAGEM_CARTAO,
+        width: 1200,
+        height: 630,
+        alt: `${site.nomeCompleto} — ${site.assinatura}`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.nomeCompleto}: continuidade operacional`,
+    title: NOME_DO_SITE,
     description: site.descricao,
+    images: [IMAGEM_CARTAO],
   },
   /* Verificação do Search Console por meta tag. Sai do HTML quando a
      variável não existe, então nada de tag vazia no ar. O método por

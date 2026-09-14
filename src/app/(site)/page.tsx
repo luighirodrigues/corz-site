@@ -8,7 +8,14 @@ import GradeSolucoes from "@/components/inicio/GradeSolucoes";
 import Confianca from "@/components/inicio/Confianca";
 import Perguntas from "@/components/blocos/Perguntas";
 import ChamadaFinal from "@/components/blocos/ChamadaFinal";
-import { metadados, DadosEstruturados, grafo, pagina, perguntas } from "@/lib/seo";
+import {
+  metadados,
+  DadosEstruturados,
+  grafo,
+  pagina,
+  perguntas,
+  NOME_DO_SITE,
+} from "@/lib/seo";
 
 /**
  * Reconstrói uma vez por dia.
@@ -20,7 +27,11 @@ import { metadados, DadosEstruturados, grafo, pagina, perguntas } from "@/lib/se
 export const revalidate = 86400;
 
 export const metadata: Metadata = metadados({
-  titulo: "Continuidade operacional para empresas que não podem parar",
+  /* O título da home é o nome do site inteiro: é este texto que vira o
+     link azul no resultado de busca da marca, e é dele que o Google
+     costuma tirar o nome exibido acima do resultado. */
+  titulo: NOME_DO_SITE,
+  absoluto: true,
   descricao:
     "A CORZ mantém no ar a operação de empresas com múltiplas unidades: conectividade e redes, cloud e datacenter, modern workplace e cibersegurança, monitorados 24 horas por dia. Desde 2012, em Pelotas/RS.",
   caminho: "/",

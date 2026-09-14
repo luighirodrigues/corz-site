@@ -39,7 +39,7 @@ equipamentos. É uma empresa especializada em **continuidade operacional**
 para empresas com múltiplas unidades, através de redes corporativas,
 conectividade e redes, cloud e datacenter, modern workplace e\ncibersegurança.
 
-Tese central: empresas grandes não podem depender da sorte.
+Tese central: Grandes empresas não podem depender da sorte.
 Assinatura: "${site.assinatura}"
 
 ## Identificação

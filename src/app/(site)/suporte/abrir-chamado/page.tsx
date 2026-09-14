@@ -55,7 +55,7 @@ export default function PaginaAbrirChamado() {
         rotulo="Suporte técnico"
         titulo="Abrir chamado"
         destaque="com prioridade real."
-        texto="Quanto melhor a descrição, mais rápido o diagnóstico. Se a operação estiver parada neste momento, abra o chamado e ligue em seguida."
+        texto="Quanto melhor a descrição, mais rápido o diagnóstico. Se a operação estiver parada neste momento, abra o chamado e ligue em seguida mesmo não sendo cliente CORZ."
         migalhas={[
           { nome: "Início", caminho: "/" },
           { nome: "Suporte", caminho: "/suporte" },

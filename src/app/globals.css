@@ -182,6 +182,39 @@
 }
 
 /* ============================================================
+   Telas muito estreitas
+
+   320px ainda existe: iPhone SE de primeira geração, Galaxy Fold
+   fechado, WebView espremida dentro de outro aplicativo.
+
+   Rótulo de botão não quebra linha por regra neste site, então nessas
+   larguras sobravam poucos pixels e o texto vazava pelas pontas. A
+   saída é o corpo ceder um pouco, e não a frase ser reescrita para o
+   pior caso: encurtar toda chamada até caber em 320px empobreceria o
+   texto nas outras nove larguras testadas.
+
+   Fica FORA de `@layer base` de propósito. Dentro da camada, qualquer
+   utilitário do Tailwind (`text-[0.9375rem]`) venceria por estar numa
+   camada posterior, e a regra não teria efeito nenhum — foi exatamente
+   o que aconteceu na primeira tentativa.
+
+   O `clamp` só age onde aperta: de ~390px para cima o valor volta
+   sozinho ao tamanho normal.
+   ============================================================ */
+
+@media (max-width: 380px) {
+  a.whitespace-nowrap,
+  button.whitespace-nowrap {
+    font-size: clamp(0.75rem, 3.6vw, 0.9375rem);
+  }
+
+  a.whitespace-nowrap[class*="rounded-"],
+  button.whitespace-nowrap[class*="rounded-"] {
+    padding-inline: 1.125rem;
+  }
+}
+
+/* ============================================================
    Cursor customizado
    O cursor nativo é ocultado apenas em ponteiro fino (mouse).
    Toque e teclado seguem com comportamento nativo.
@@ -946,9 +979,9 @@ html.lenis.lenis-stopped {
   /* 9 × 3.75 = 2,4:1, exatamente a proporção da tela em que os
      arquivos foram nivelados. Qualquer outra caixa sobraria espaço
      dentro do item e faria os logotipos parecerem pequenos e soltos. */
-  width: 9rem;
-  height: 3.75rem;
-  padding-inline: 1.5rem;
+  width: 10rem;
+  height: 4.1667rem;
+  padding-inline: 1.4rem;
   box-sizing: content-box;
   /* Fio entre as marcas em vez de cartão em volta de cada uma: é o
      gesto de grade editorial que o resto do site usa. */
@@ -974,9 +1007,9 @@ html.lenis.lenis-stopped {
 
 @media (max-width: 640px) {
   .mural-item {
-    width: 6.6rem;
-    height: 2.75rem;
-    padding-inline: 1rem;
+    width: 7.2rem;
+    height: 3rem;
+    padding-inline: 0.9rem;
   }
   .mural {
     mask-image: linear-gradient(

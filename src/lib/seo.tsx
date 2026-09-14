@@ -4,6 +4,28 @@ import { DOMINIO_CANONICO, INDEXAVEL } from "@/lib/constantes";
 
 export const URL_BASE = site.url.replace(/\/$/, "");
 
+/**
+ * Nome do site como ele deve aparecer no resultado de busca e no cartão
+ * de link. Mais longo que a marca sozinha de propósito: "CORZ" isolado
+ * não diz a ninguém o que a empresa faz, e é justamente esta linha que
+ * o Google lê para montar o nome do site.
+ */
+export const NOME_DO_SITE =
+  "CORZ Tecnologia | Continuidade Operacional e Cibersegurança";
+
+/**
+ * Cartão de link padrão.
+ *
+ * O banner da marca, e não a imagem gerada por página. Um cartão de
+ * link é visto de relance numa conversa de WhatsApp ou numa timeline —
+ * ali reconhecer a marca vale mais do que ler o título da página
+ * repetido dentro da imagem.
+ *
+ * JPEG e não PNG: o mesmo banner em PNG tem 594 KB contra 28 KB aqui, e
+ * vários raspadores de preview desistem antes de baixar meio megabyte.
+ */
+export const IMAGEM_CARTAO = "/marca/og-corz.jpg";
+
 export { DOMINIO_CANONICO, INDEXAVEL };
 
 export function abs(caminho = "/") {
@@ -25,6 +47,7 @@ export function metadados({
   publicadoEm,
   atualizadoEm,
   autor,
+  absoluto,
 }: {
   titulo: string;
   descricao: string;
@@ -35,12 +58,19 @@ export function metadados({
   publicadoEm?: string;
   atualizadoEm?: string;
   autor?: string;
+  /**
+   * Usa o título exatamente como veio, sem o sufixo " | CORZ" que o
+   * gabarito do layout acrescenta. Existe para a home: lá o título já
+   * é o nome do site inteiro, e o sufixo o deixaria "…Cibersegurança |
+   * CORZ" — repetição que o buscador corta e que fica feia na aba.
+   */
+  absoluto?: boolean;
 }): Metadata {
   const url = abs(caminho);
-  const og = imagem ?? abs(`/api/og?titulo=${encodeURIComponent(titulo)}`);
+  const og = imagem ?? abs(IMAGEM_CARTAO);
 
   return {
-    title: titulo,
+    title: absoluto ? { absolute: titulo } : titulo,
     description: descricao,
     alternates: { canonical: url },
     robots: noindex || !INDEXAVEL
@@ -59,7 +89,7 @@ export function metadados({
     openGraph: {
       type: tipo,
       url,
-      siteName: site.nomeCompleto,
+      siteName: NOME_DO_SITE,
       title: titulo,
       description: descricao,
       locale: "pt_BR",
@@ -171,12 +201,52 @@ export function siteWeb() {
     "@type": "WebSite",
     "@id": ID_SITE,
     url: URL_BASE,
-    name: site.nomeCompleto,
+    /* O nome completo, e não só "CORZ": é daqui que o buscador tira o
+       nome do site exibido acima do resultado. `alternateName` dá a
+       forma curta, para quem procura pela marca sozinha. */
+    name: NOME_DO_SITE,
+    alternateName: [site.nomeCompleto, site.nome],
     inLanguage: "pt-BR",
     publisher: { "@id": ID_ORG },
     // Sem `potentialAction`. A busca vivia no blog, que está fora do ar,
     // e declarar uma ação que responde 404 é a forma mais silenciosa de
     // entregar ao buscador uma área que não deveria aparecer.
+  };
+}
+
+/**
+ * Navegação principal declarada para o buscador.
+ *
+ * É a marcação que o Google lê como candidata a sitelink — aquele bloco
+ * de atalhos que aparece embaixo do resultado quando alguém busca pela
+ * marca. Vale dizer com todas as letras: **sitelink não se pede, se
+ * merece**. O Google escolhe sozinho, pelo comportamento de quem clica
+ * e pela estrutura interna do site, e pode simplesmente não exibir
+ * nenhum. Esta lista é a melhor pista possível de qual é a hierarquia
+ * pretendida, não um comando.
+ *
+ * A ordem é deliberada: contato primeiro, porque é a página que resolve
+ * a intenção de quem busca pela marca — quem digita "CORZ" no Google na
+ * maioria das vezes quer falar com a CORZ, não ler sobre ela. Depois
+ * vêm as quatro frentes, na mesma ordem do menu e das páginas internas.
+ * Divergir entre as três seria justamente o sinal de estrutura confusa
+ * que faz o buscador desistir de montar o bloco.
+ */
+export function navegacaoPrincipal(
+  itens: { nome: string; caminho: string }[]
+) {
+  return {
+    "@type": "ItemList",
+    "@id": `${URL_BASE}/#navegacao`,
+    name: "Navegação principal",
+    itemListOrder: "https://schema.org/ItemListOrderAscending",
+    numberOfItems: itens.length,
+    itemListElement: itens.map((item, i) => ({
+      "@type": "SiteNavigationElement",
+      position: i + 1,
+      name: item.nome,
+      url: abs(item.caminho),
+    })),
   };
 }
 

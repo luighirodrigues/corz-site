@@ -81,9 +81,9 @@ export default function PaginaSuporte() {
 
       <CabecalhoPagina
         rotulo="Suporte"
-        titulo="Suporte humano,"
-        destaque="rápido e resolutivo."
-        texto="Primeira resposta em até 3 minutos, com gente que conhece a sua operação. Sem robô genérico, sem repetir o problema para três atendentes diferentes."
+        titulo="Seu problema em primeiro lugar,"
+        destaque="mesmo se não for cliente."
+        texto="Acelere a jornada comercial em momentos críticos, descrevendo diretamente o conflito dentro de sua operação."
         migalhas={[
           { nome: "Início", caminho: "/" },
           { nome: "Suporte", caminho: "/suporte" },
@@ -100,7 +100,7 @@ export default function PaginaSuporte() {
                   Abrir chamado
                 </span>
                 <span className="mt-0.5 block text-[0.8125rem] text-tinta-950/60">
-                  Resposta em até 3 minutos
+                  Estou com conflito em minha operação
                 </span>
               </span>
               <svg viewBox="0 0 16 16" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1">
@@ -137,11 +137,10 @@ export default function PaginaSuporte() {
               Aqui todo cliente tem prioridade.
             </h2>
             <p className="mt-6 max-w-[58ch] text-[1.0625rem] leading-[1.66] text-tinta-900/68">
-              Não existe fila preferencial na CORZ, nem atendimento melhor para
-              quem paga mais. A promessa de primeira resposta em até 3 minutos
-              vale para todo mundo. Dizer o que está acontecendo na abertura
-              serve para uma coisa só: colocar a pessoa certa na conversa já no
-              primeiro minuto.
+              Caso sua operação esteja enfrentando problemas de rede,
+              infraestrutura ou segurança, mesmo não sendo cliente ativo, entre
+              em contato conosco e fure a fila comercial. Garanta suporte
+              imediato.
             </p>
           </Revelar>
 

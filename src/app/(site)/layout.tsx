@@ -8,7 +8,14 @@ import BotaoWhatsApp from "@/components/sistema/BotaoWhatsApp";
 import BrumaInferior from "@/components/sistema/BrumaInferior";
 import Medicao from "@/components/sistema/Medicao";
 import AvisoCookies from "@/components/sistema/AvisoCookies";
-import { DadosEstruturados, grafo, organizacao, siteWeb } from "@/lib/seo";
+import {
+  DadosEstruturados,
+  grafo,
+  organizacao,
+  siteWeb,
+  navegacaoPrincipal,
+} from "@/lib/seo";
+import { solucoes } from "@/conteudo/solucoes";
 
 export default function LayoutSite({
   children,
@@ -17,7 +24,24 @@ export default function LayoutSite({
 }) {
   return (
     <>
-      <DadosEstruturados dados={grafo(organizacao(), siteWeb())} />
+      <DadosEstruturados
+        dados={grafo(
+          organizacao(),
+          siteWeb(),
+          /* Contato primeiro: quem digita "CORZ" no Google quase sempre
+             quer falar com a CORZ, não ler sobre ela. Depois as quatro
+             frentes, na mesma ordem do menu. */
+          navegacaoPrincipal([
+            { nome: "Contato", caminho: "/contato" },
+            ...solucoes.map((s) => ({
+              nome: s.nome,
+              caminho: `/solucoes/${s.slug}`,
+            })),
+            { nome: "Suporte", caminho: "/suporte" },
+            { nome: "Sobre a CORZ", caminho: "/sobre" },
+          ])
+        )}
+      />
       <RolagemSuave />
       <CursorCorz />
       <BarraProgresso />

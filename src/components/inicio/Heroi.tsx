@@ -39,7 +39,7 @@ export default function Heroi() {
 
             <Revelar atraso={80}>
               <h1 className="mt-7 font-display text-[clamp(2.5rem,6.4vw,4.75rem)] font-bold leading-[0.96] tracking-[-0.042em]">
-                Empresas grandes não podem{" "}
+                Grandes empresas não podem{" "}
                 <Destaque>depender da sorte.</Destaque>
               </h1>
             </Revelar>
