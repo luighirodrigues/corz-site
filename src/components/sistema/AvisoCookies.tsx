@@ -46,9 +46,12 @@ export default function AvisoCookies() {
       .some((c) => c.startsWith(`${COOKIE_CONSENTIMENTO}=`));
     if (jaEscolheu) return;
 
-    setVisivel(true);
-    const t = window.setTimeout(() => setEntrou(true), 900);
-    return () => window.clearTimeout(t);
+    const t1 = window.setTimeout(() => setVisivel(true), 50);
+    const t2 = window.setTimeout(() => setEntrou(true), 900);
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
   }, []);
 
   if (!visivel) return null;

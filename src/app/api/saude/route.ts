@@ -17,19 +17,34 @@ export const dynamic = "force-dynamic";
  * diagnóstico em endpoint público é reconhecimento gratuito para quem
  * está sondando.
  */
+let ultimoCheck = 0;
+let ultimoStatusOk = false;
+let ultimoMs = 0;
+
 export async function GET() {
+  const agora = Date.now();
+  // Cache de 10 s para proteger o pool de conexões (max: 10) contra rajadas de DoS.
+  if (ultimoStatusOk && agora - ultimoCheck < 10_000) {
+    return Response.json(
+      { ok: true, banco: "ok", email: emailConfigurado, ms: ultimoMs, cache: true },
+      { headers: { "Cache-Control": "no-store" } }
+    );
+  }
+
   const inicio = Date.now();
 
   try {
     await db.execute(sql`select 1`);
+    ultimoCheck = Date.now();
+    ultimoStatusOk = true;
+    ultimoMs = ultimoCheck - inicio;
+
     return Response.json(
-      /* `email` é booleano de propósito: diz se o aviso dos
-         formulários vai sair, sem revelar host, usuário nem porta. É a
-         diferença entre monitorar e entregar o mapa do servidor. */
-      { ok: true, banco: "ok", email: emailConfigurado, ms: Date.now() - inicio },
+      { ok: true, banco: "ok", email: emailConfigurado, ms: ultimoMs },
       { headers: { "Cache-Control": "no-store" } }
     );
   } catch {
+    ultimoStatusOk = false;
     return Response.json(
       { ok: false, banco: "indisponivel" },
       { status: 503, headers: { "Cache-Control": "no-store" } }

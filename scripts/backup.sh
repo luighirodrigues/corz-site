@@ -16,6 +16,9 @@
 
 set -eu
 
+# Permissões estritas: dumps do banco contêm PII e dados sensíveis regulados por LGPD.
+umask 077
+
 cd "$(dirname "$0")/.."
 
 if [ -f .env ]; then
@@ -30,6 +33,7 @@ CARIMBO="$(date +%Y-%m-%d_%H%M)"
 ARQUIVO="$DESTINO/corz_${CARIMBO}.sql.gz"
 
 mkdir -p "$DESTINO"
+chmod 700 "$DESTINO"
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] iniciando backup"
 

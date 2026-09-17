@@ -132,6 +132,7 @@ export async function sessaoAtual(): Promise<Sessao | null> {
       email: esquema.usuarios.email,
       papel: esquema.usuarios.papel,
       ativo: esquema.usuarios.ativo,
+      ultimoUso: esquema.sessoes.ultimoUso,
     })
     .from(esquema.sessoes)
     .innerJoin(
@@ -150,11 +151,13 @@ export async function sessaoAtual(): Promise<Sessao | null> {
   const linha = linhas[0];
   if (!linha || !linha.ativo) return null;
 
-  // Renovação deslizante, com folga para não escrever a cada clique.
-  await db
-    .update(esquema.sessoes)
-    .set({ ultimoUso: agora })
-    .where(eq(esquema.sessoes.id, linha.sessaoId));
+  // Renovação deslizante: só escreve no banco se passaram mais de 5 minutos desde a última atualização.
+  if (agora.getTime() - linha.ultimoUso.getTime() > 5 * 60_000) {
+    await db
+      .update(esquema.sessoes)
+      .set({ ultimoUso: agora })
+      .where(eq(esquema.sessoes.id, linha.sessaoId));
+  }
 
   return {
     sessaoId: linha.sessaoId,
@@ -204,8 +207,8 @@ export async function conferirCsrf(req: Request) {
 
 /* ---------- Controle de tentativas ------------------------ */
 
-const LIMITE_POR_EMAIL = 6;
-const LIMITE_POR_IP = 20;
+const LIMITE_POR_EMAIL = 30;
+const LIMITE_POR_IP = 15;
 const JANELA_MIN = 15;
 
 export async function bloqueadoPorTentativas(email: string, ip: string) {
@@ -233,10 +236,17 @@ export async function bloqueadoPorTentativas(email: string, ip: string) {
       )
     );
 
-  return (
-    (porEmail?.total ?? 0) >= LIMITE_POR_EMAIL ||
-    (porIp?.total ?? 0) >= LIMITE_POR_IP
-  );
+  const falhasEmail = porEmail?.total ?? 0;
+  const falhasIp = porIp?.total ?? 0;
+
+  // Atraso progressivo a partir de 3 falhas para desacelerar scripts de força bruta.
+  if (falhasEmail >= 3 || falhasIp >= 3) {
+    const espera = Math.min(Math.max(falhasEmail, falhasIp) * 350, 2500);
+    await new Promise((resolve) => setTimeout(resolve, espera));
+  }
+
+  // Bloqueio efetivo após 15 falhas no mesmo IP ou 30 no mesmo e-mail na janela.
+  return falhasIp >= LIMITE_POR_IP || falhasEmail >= LIMITE_POR_EMAIL;
 }
 
 export async function registrarTentativa(

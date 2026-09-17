@@ -3,6 +3,7 @@ import { db, esquema } from "@/db";
 import { exigirSessao } from "@/lib/auth";
 import { formatarDataHora } from "@/lib/cliente";
 import PainelDoisFatores from "@/components/admin/PainelDoisFatores";
+import FormularioTrocaSenha from "@/components/admin/FormularioTrocaSenha";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Segurança" };
@@ -52,6 +53,8 @@ export default async function PaginaSeguranca() {
         ativoInicial={usuario?.doisFatores ?? false}
         codigosRestantes={usuario?.codigos.length ?? 0}
       />
+
+      <FormularioTrocaSenha />
 
       <section className="rounded-[10px] border border-petroleo/14 bg-branco">
         <header className="flex items-center justify-between border-b border-petroleo/12 px-6 py-4">
