@@ -31,8 +31,26 @@ export default function Heroi() {
       </div>
 
       <Envelope className="relative pb-20 pt-[calc(var(--altura-cabecalho)+4.5rem)] sm:pb-28 sm:pt-[calc(var(--altura-cabecalho)+7rem)]">
-        <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-7">
+        {/* Uma grade de duas linhas, e não uma coluna de texto ao lado
+            de uma coluna de imagem.
+
+            É o que permite o símbolo entrar no meio do texto no celular
+            — entre o parágrafo e os botões — e continuar sendo a coluna
+            da direita no desktop. Argumento e símbolo pertencem a
+            células diferentes, então nenhuma ordem de DOM resolveria
+            isso sozinha: quem decide é a posição na grade.
+
+            `gap-y-0` no desktop de propósito. O espaçamento vertical
+            entre o parágrafo e os botões continua vindo do `mt-9` de
+            sempre, e não de um vão de grade, para as duas linhas
+            empilharem exatamente como empilhavam quando eram um bloco
+            só. */}
+        <div className="grid gap-0 lg:grid-cols-12 lg:gap-x-8 lg:gap-y-0">
+          {/* Rótulo, título e parágrafo.
+              `relative z-10` para o texto ficar por cima: os halos do
+              símbolo são absolutos e, sem isso, pintariam sobre as
+              letras em vez de passar por trás delas. */}
+          <div className="relative z-10 lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:self-end">
             <Revelar>
               <Rotulo cor="ciano">Continuidade operacional</Rotulo>
             </Revelar>
@@ -53,6 +71,31 @@ export default function Heroi() {
               </p>
             </Revelar>
 
+          </div>
+
+          {/* O símbolo.
+              No celular ele entra aqui, entre o parágrafo e os botões, e
+              menor: metade da largura da tela em vez da largura toda. É
+              a posição em que ele respira sem empurrar a chamada para
+              fora da primeira dobra — antes ficava depois de tudo, e
+              quem rolava até ele já tinha passado pelos botões.
+              No desktop volta a ser a coluna da direita, em tamanho
+              cheio, ocupando as duas linhas. */}
+          <Revelar
+            atraso={200}
+            modo="surgir"
+            /* Margens do celular: 15px a menos de cada lado. Em cima
+               sai do próprio `margin-top` (48px → 33px); embaixo, a
+               folga vem do `mt-9` dos botões, que pertence ao bloco
+               seguinte — por isso a margem negativa, que puxa a chamada
+               15px para cima sem mexer no desktop. */
+            className="relative z-0 mx-auto mt-[33px] mb-[-15px] w-[56%] max-w-[15rem] sm:w-[40%] lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1 lg:mx-0 lg:mt-0 lg:mb-0 lg:w-full lg:max-w-none lg:self-center"
+          >
+            <SimboloVivo />
+          </Revelar>
+
+          {/* Botões e a linha de setores */}
+          <div className="relative z-10 lg:col-span-7 lg:col-start-1 lg:row-start-2 lg:self-start">
             <Revelar atraso={240}>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Link
@@ -82,10 +125,6 @@ export default function Heroi() {
               </p>
             </Revelar>
           </div>
-
-          <Revelar atraso={200} modo="surgir" className="lg:col-span-5">
-            <SimboloVivo />
-          </Revelar>
         </div>
       </Envelope>
 

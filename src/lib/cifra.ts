@@ -72,9 +72,15 @@ export function tokenAleatorio(bytes = 32) {
   return randomBytes(bytes).toString("base64url");
 }
 
-/** Comparação em tempo constante — evita oráculo por medição de tempo e comprimento. */
+/** Comparação em tempo constante — evita oráculo por medição de tempo. */
 export function iguaisEmTempoConstante(a: string, b: string) {
-  const ha = createHash("sha256").update(a).digest();
-  const hb = createHash("sha256").update(b).digest();
-  return timingSafeEqual(ha, hb) && a.length === b.length;
+  const ba = Buffer.from(a);
+  const bb = Buffer.from(b);
+  if (ba.length !== bb.length) {
+    // Ainda assim comparamos algo do mesmo tamanho para não vazar o
+    // comprimento pela duração da chamada.
+    timingSafeEqual(ba, ba);
+    return false;
+  }
+  return timingSafeEqual(ba, bb);
 }

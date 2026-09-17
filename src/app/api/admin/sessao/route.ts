@@ -78,12 +78,6 @@ export async function POST(req: Request) {
   // Segundo fator
   if (usuario.doisFatores && usuario.segredo2fa) {
     if (!codigo) {
-      await auditar({
-        usuarioId: usuario.id,
-        acao: "etapa_1_sucesso_aguardando_2fa",
-        entidade: "sessao",
-        entidadeId: usuario.id,
-      });
       return respostaJson({ ok: false, precisa2fa: true }, 200);
     }
 

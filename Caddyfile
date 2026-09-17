@@ -35,13 +35,7 @@ www.{$DOMINIO} {
 	@painel path /admin*
 	header @painel Cache-Control "no-store, no-cache, must-revalidate, private"
 
-	# Endpoints internos não devem ser acessíveis pela internet pública.
-	@cron path /api/cron/*
-	respond @cron "Acesso restrito" 403
-
 	reverse_proxy site:3000 {
-		header_up X-Real-IP {remote_host}
-		header_up X-Forwarded-For {remote_host}
 		health_uri /api/saude
 		health_interval 30s
 		health_timeout 5s

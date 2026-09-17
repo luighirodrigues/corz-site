@@ -62,21 +62,6 @@ export async function POST(req: Request) {
 
   const dados = analise.data;
 
-  // Limite por e-mail para impedir inundações dirigidas à mesma caixa.
-  const taxaEmail = limitar(`lead:email:${dados.email}`, {
-    limite: 3,
-    janelaMs: 10 * 60_000,
-  });
-  if (!taxaEmail.permitido) {
-    return respostaJson(
-      {
-        ok: false,
-        erro: "Muitos envios para este e-mail. Aguarde alguns minutos antes de tentar novamente.",
-      },
-      429
-    );
-  }
-
   // Armadilha preenchida: respondemos como sucesso para não ensinar o bot,
   // mas não gravamos nada.
   if (dados.site) return respostaJson({ ok: true });

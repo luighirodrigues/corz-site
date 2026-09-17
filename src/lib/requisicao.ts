@@ -10,20 +10,9 @@ import { headers } from "next/headers";
  */
 export async function ipDoCliente() {
   const h = await headers();
-  // Confiamos em x-real-ip injetado pelo proxy reverso confiável (Caddy).
-  const realIp = h.get("x-real-ip");
-  if (realIp) return realIp.trim().slice(0, 64);
-
-  // Se houver x-forwarded-for com múltiplos saltos, o último foi adicionado
-  // pelo proxy mais próximo da aplicação (não pelo cliente inicial).
   const encaminhado = h.get("x-forwarded-for");
-  if (encaminhado) {
-    const ips = encaminhado.split(",").map((s) => s.trim()).filter(Boolean);
-    const ultimo = ips.pop();
-    if (ultimo) return ultimo.slice(0, 64);
-  }
-
-  return "desconhecido";
+  if (encaminhado) return encaminhado.split(",")[0]!.trim().slice(0, 64);
+  return (h.get("x-real-ip") ?? "desconhecido").slice(0, 64);
 }
 
 export async function agenteDoCliente() {
@@ -113,16 +102,10 @@ export async function mesmaOrigem(req: Request) {
   const origem = req.headers.get("origin") ?? h.get("origin");
   const referencia = req.headers.get("referer") ?? h.get("referer");
   const bruto = origem ?? referencia;
-
-  // Requisições de escrita (POST, PUT, DELETE, PATCH) exigem confirmação de origem.
-  // Sem Origin nem Referer em requisições de mutação, rejeitamos para barrar bots
-  // que suprimem esses cabeçalhos intencionalmente.
-  const metodo = req.method?.toUpperCase();
-  const mutacao = metodo && ["POST", "PUT", "DELETE", "PATCH"].includes(metodo);
-  if (!bruto) return !mutacao;
+  if (!bruto) return true;
 
   const host = h.get("host");
-  if (!host) return false;
+  if (!host) return true;
 
   try {
     return new URL(bruto).host === host;

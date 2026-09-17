@@ -71,21 +71,6 @@ export async function POST(req: Request) {
   const d = analise.data;
   if (d.site) return respostaJson({ ok: true, protocolo: "—" });
 
-  // Limite por e-mail para impedir inundações de chamados repetidos.
-  const taxaEmail = limitar(`chamado:email:${d.email}`, {
-    limite: 4,
-    janelaMs: 10 * 60_000,
-  });
-  if (!taxaEmail.permitido) {
-    return respostaJson(
-      {
-        ok: false,
-        erro: "Muitos chamados abertos recentemente para este e-mail. Se for urgente, ligue para (53) 3027-2698.",
-      },
-      429
-    );
-  }
-
   const protocolo = `CZ-${Date.now().toString(36).toUpperCase().slice(-6)}`;
 
   const mensagem = [

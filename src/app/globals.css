@@ -865,47 +865,49 @@ html.lenis.lenis-stopped {
    linha reta, e funciona igual sobre seção clara e sobre seção
    escura, justamente porque não tem cor própria.
 
-   Duas camadas em vez de uma: uma leve cobrindo a faixa inteira e
-   outra mais fechada só no terço final. O desfoque cresce em vez de
-   aparecer de uma vez, que é a diferença entre parecer acabamento e
-   parecer um retângulo embaçado colado na tela.
+   ---- Por que uma camada só ----
 
-   Nunca recebe clique — fica abaixo do botão de WhatsApp (z-95) e
-   acima do conteúdo.
+   A primeira versão empilhava duas, com desfoques diferentes, para o
+   embaçamento crescer em vez de aparecer de uma vez. No Chrome ficava
+   melhor; no Safari quebrava. Empilhar `backdrop-filter` cria raízes
+   de fundo aninhadas, e o Safari compõe isso de um jeito próprio — a
+   camada de cima ora não enxergava o resultado da de baixo, ora
+   piscava durante a rolagem.
+
+   Uma camada só, com máscara, resolve nos dois. O degradê fica um
+   pouco menos suave e a faixa volta a funcionar no navegador de
+   metade dos celulares, que é a troca certa.
+
+   ---- Por que ela passa 1px da borda ----
+
+   No iOS a barra do Safari entra e sai durante a rolagem, e o
+   elemento fixo é reposicionado a cada mudança. Terminando exatamente
+   em `bottom: 0`, sobrava um fio de um pixel sem desfoque na base
+   nesses quadros intermediários. Descer um pixel além da borda e
+   compensar na altura elimina a emenda sem mudar o que se vê.
    ============================================================ */
 
 .bruma-base {
   position: fixed;
   inset-inline: 0;
-  bottom: 0;
+  /* 1px além da borda: ver a explicação acima. */
+  bottom: -1px;
   z-index: 80;
-  height: clamp(3.25rem, 6.5vh, 5.5rem);
+  height: calc(clamp(2.5rem, 5vh, 4rem) + 1px);
   pointer-events: none;
   display: none;
-}
-
-.bruma-base::before,
-.bruma-base::after {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
+  /* Camada de composição própria. Sem isto o Safari recalcula o
+     desfoque junto com a pintura da página e a faixa treme ao rolar. */
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .bruma-base::before {
-  top: 0;
-  /* Sem prefixo -webkit- à mão: o Lightning CSS do Tailwind emite o
-     que cada navegador da browserslist precisa. Escrever os dois faz
-     ele deduplicar e manter só o prefixado, que é justamente o que
-     alguns Chromium não implementam — o desfoque some sem erro. */
-  backdrop-filter: blur(2px);
-  mask-image: linear-gradient(to top, #000 34%, transparent 100%);
-}
-
-.bruma-base::after {
-  height: 58%;
-  backdrop-filter: blur(6px);
-  mask-image: linear-gradient(to top, #000 20%, transparent 100%);
+  content: "";
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(5px);
+  mask-image: linear-gradient(to top, #000 28%, transparent 100%);
 }
 
 /* Só entra onde o navegador sabe desfocar o fundo. Sem isso o
