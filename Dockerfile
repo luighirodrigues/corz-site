@@ -62,6 +62,9 @@ COPY --from=construcao --chown=corz:nodejs /app/scripts ./scripts
 COPY --from=construcao --chown=corz:nodejs /app/src/db ./src/db
 COPY --from=construcao --chown=corz:nodejs /app/src/lib ./src/lib
 COPY --from=construcao --chown=corz:nodejs /app/tsconfig.json ./tsconfig.json
+# Os scripts .mjs importam postgres diretamente; o bundle do Next não
+# garante que esse pacote seja incluído no rastreamento do standalone.
+COPY --from=dependencias --chown=corz:nodejs /app/node_modules/postgres ./node_modules/postgres
 COPY --from=dependencias --chown=corz:nodejs /app/node_modules/drizzle-kit ./node_modules/drizzle-kit
 COPY --from=dependencias --chown=corz:nodejs /app/node_modules/tsx ./node_modules/tsx
 COPY --from=dependencias --chown=corz:nodejs /app/node_modules/esbuild ./node_modules/esbuild
