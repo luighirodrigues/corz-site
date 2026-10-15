@@ -21,8 +21,14 @@ const limpo = (v: string | undefined) => {
 export const medicao = {
   /** Google Analytics 4 — "G-XXXXXXXXXX". */
   ga4: limpo(process.env.NEXT_PUBLIC_GA4_ID),
-  /** Google Tag Manager — "GTM-XXXXXXX". Alternativa ao GA4 direto. */
-  gtm: limpo(process.env.NEXT_PUBLIC_GTM_ID),
+  /**
+   * Google Tag Manager — "GTM-XXXXXXX". Alternativa ao GA4 direto.
+   *
+   * Tem valor padrão porque o build em Docker não repassa esta variável
+   * e o `.env` não vai para o git: sem o padrão, o contêiner publicaria
+   * sem GTM. A variável continua mandando quando preenchida.
+   */
+  gtm: limpo(process.env.NEXT_PUBLIC_GTM_ID) ?? "GTM-P87W348M",
   /** Pixel da Meta (Facebook e Instagram) — só dígitos. */
   metaPixel: limpo(process.env.NEXT_PUBLIC_META_PIXEL_ID),
   /** Google Ads, para conversão — "AW-XXXXXXXXX". */
