@@ -17,6 +17,9 @@ const MEDICAO_SCRIPT = [
   "https://www.google-analytics.com",
   "https://connect.facebook.net",
   "https://snap.licdn.com",
+  // Microsoft Clarity, carregado por dentro do contêiner do GTM.
+  "https://www.clarity.ms",
+  "https://scripts.clarity.ms",
 ];
 
 const MEDICAO_CONEXAO = [
@@ -27,6 +30,9 @@ const MEDICAO_CONEXAO = [
   "https://www.googletagmanager.com",
   "https://connect.facebook.net",
   "https://px.ads.linkedin.com",
+  // Clarity envia os dados de sessão para subdomínios próprios e para o Bing.
+  "https://*.clarity.ms",
+  "https://c.bing.com",
 ];
 
 const MEDICAO_QUADRO = [
